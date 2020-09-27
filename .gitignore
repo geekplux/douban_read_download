@@ -2,3 +2,4 @@ __pycache__
 books.csv
 secret
 .env
+.DS_Store

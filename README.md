@@ -12,10 +12,21 @@ pip install -r requirements.txt
 
 ## Usage
 
+#### Step 1:
+
+Copy your cookie from douban *https://book.douban.com/mine?status=collect* page into `.env.example` file, drop the suffix `.example` then.
+
+![](screenshot/cookie.png)
+
+#### Step 2:
+
 ```bash
-# Would create a CSV file named `books.csv` with all your reading records
 scrapy runspider start.py
 ```
+
+Would create a CSV file named `books.csv` with all your reading records
+
+![](screenshot/books.png)
 
 # LICENSE
 
