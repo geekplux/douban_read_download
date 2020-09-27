@@ -1,2 +1,4 @@
 __pycache__
 books.csv
+secret
+.env

@@ -1,5 +1,11 @@
 import scrapy
 import pandas as pd
+from environs import Env
+
+
+env = Env()
+env.read_env()
+cookies = env("COOKIES")
 
 
 def _s(s):
@@ -10,12 +16,12 @@ class DoubanSpider(scrapy.Spider):
     name = 'douban_spider'
     start_url = 'https://book.douban.com/mine?status=collect'
     headers = {
-        # TODO
-        'cookie': 'TODO',
+        'cookie': cookies,
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36'
     }
 
-    df = pd.DataFrame(columns=['title', 'url', 'pub', 'rating', 'read_date', 'tags', 'comment'])
+    df = pd.DataFrame(columns=['title', 'url', 'pub',
+                               'rating', 'read_date', 'tags', 'comment'])
 
     def start_requests(self):
         yield scrapy.Request(url=self.start_url, callback=self.parse_list, headers=self.headers)
@@ -27,8 +33,10 @@ class DoubanSpider(scrapy.Spider):
             title = item.css('div.info > h2 > a::text').get().strip()
             print('Is scraping: ', title)
             try:
-                rating = _s(item.css('div.info div.short-note > div:nth-child(1) > span:nth-child(1)::attr(class)').get()).strip()
-                rating = int(_s(filter(str.isdigit, rating))) if rating.startswith('rating') else ''
+                rating = _s(item.css(
+                    'div.info div.short-note > div:nth-child(1) > span:nth-child(1)::attr(class)').get()).strip()
+                rating = int(_s(filter(str.isdigit, rating))
+                             ) if rating.startswith('rating') else ''
                 book = {
                     'title': title,
                     'url': _s(item.css('div.info > h2 > a::attr(href)').get()),
@@ -50,16 +58,3 @@ class DoubanSpider(scrapy.Spider):
             yield scrapy.Request(url, callback=self.parse_list, headers=self.headers)
         else:
             self.df.to_csv('./books.csv')
-
-        # yield scrapy.Request(url=detail_url, callback=self.parse_detail, headers=self.headers)
-
-    # def parse_detail(self, response):
-    #   print('book detail page url: ', response.url)
-    #   # print(response.css('#info::text').get())
-    #   print(response.xpath('//*[@id="info"]/text()[8]').get())
-
-    #   book = {
-    #     'title': response.css('#wrapper > h1 > span::text').get()
-    #   }
-
-    #   print(book)
