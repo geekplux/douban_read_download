@@ -1,5 +1,5 @@
 __pycache__
-books.csv
+*.csv
 secret
 .env
 .DS_Store
